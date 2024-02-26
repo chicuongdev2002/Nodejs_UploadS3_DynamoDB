@@ -8,11 +8,15 @@
 <body>
     <h1>Xin Chao Chi Cuong</h1>
     <form action="/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" >
         <input type="text" name="name" placeholder="Nhap ten mon hoc">
         <input type="text" name="course_type" placeholder="Nhap loai">
         <input type="text" name="semester" placeholder="Nhap hoc ky">
         <input type="text" name="department" placeholder="Nhap khoa">
         <input type="submit"  placeholder="Them">
+    </form>
+    <form id="delete" method="POST" action ="/delete" enctype="multipart/form-data">
+        <input type="submit" value="Xoa"/>
     </form>
     <table>
         <tr>
@@ -24,11 +28,12 @@
         </tr>
         <% for (var i = 0; i < data.length; i++) { %>
             <tr>
-                <td><%= i + 1 %></td>
+                <td><%= data[i].id %></td>
                 <td><%= data[i].name %></td>
                 <td><%= data[i].course_type %></td>
                 <td><%= data[i].semester %></td>
                 <td><%= data[i].department %></td>
+                <td><input type="checkbox" name="<%=data[i].id %>"/></td>
             </tr>
         <% } %>
     </table>
