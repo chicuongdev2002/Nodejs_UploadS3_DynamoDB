@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Xin Chao Chi Cuong</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Nhap ten mon hoc">
+        <input type="text" name="course_type" placeholder="Nhap loai">
+        <input type="text" name="semester" placeholder="Nhap hoc ky">
+        <input type="text" name="department" placeholder="Nhap khoa">
+        <input type="submit"  placeholder="Them">
+    </form>
+    <table>
+        <tr>
+            <th>STT</th>
+            <th>Mon hoc</th>
+            <th>Loai</th>
+            <th>Hoc ky</th>
+            <th>Khoa</th>
+        </tr>
+        <% for (var i = 0; i < data.length; i++) { %>
+            <tr>
+                <td><%= i + 1 %></td>
+                <td><%= data[i].name %></td>
+                <td><%= data[i].course_type %></td>
+                <td><%= data[i].semester %></td>
+                <td><%= data[i].department %></td>
+            </tr>
+        <% } %>
+    </table>
+</body>
+</html>
