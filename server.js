@@ -1,12 +1,12 @@
 const express = require('express');
 const multer = require('multer');
-const courses = require('./data');
+const coursesData = require('./data');
 const app = express();
 const upload = multer();
 
 // Biến toàn cục để lưu trữ ID hiện tại
-let currentId = courses.length+1;
-
+let currentId = coursesData.length+1;
+let courses = [...coursesData];
 //register middlewares
 app.use(express.json({ extended: false }));
 app.use(express.static('./templates'));
@@ -34,15 +34,16 @@ app.post('/', upload.fields([]), (req, res) => {
 });
 
 //delete
-app.delete('/courses/:id', (req, res) => {
-    const courseId = req.params.id;
-    const index = courses.findIndex(course => course.id === courseId);
-    if (index !== -1) {
-        courses.splice(index, 1);
-        res.status(200).send('Khóa học đã được xóa thành công.');
-    } else {
-        res.status(404).send('Khóa học không tồn tại.');
+app.post('/delete', upload.fields([]), (req, res) => {
+    //Lấy list bao gồm các ô checkbox
+    const listItems = Object.keys(req.body);
+    console.log(listItems);
+    //Nếu không chọn vào check box trả về trang ban đầu
+    if(listItems.length === 0){
+        return res.redirect("/")
     }
+    courses = courses.filter(item => !listItems.includes(item.id.toString()));
+    return res.redirect("/");
 });
 
 app.listen(3000, () => {
