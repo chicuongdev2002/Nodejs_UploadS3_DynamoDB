@@ -20,13 +20,14 @@ app.get('/', (req, res) => {
     return res.render('index', { data: courses });
 });
 
-app.post('/', upload.fields([]), (req, res) => {
+app.post('/', upload.single('image'), (req, res) => {
     const newCourse = {
         id: currentId++,
         name: req.body.name,
         course_type: req.body.course_type,
         semester: req.body.semester,
-        department: req.body.department
+        department: req.body.department,
+        image: req.file ? req.file.filename : null
     };
 
     courses.push(newCourse);
