@@ -13,7 +13,7 @@
         <input type="text" name="course_type" placeholder="Nhap loai">
         <input type="text" name="semester" placeholder="Nhap hoc ky">
         <input type="text" name="department" placeholder="Nhap khoa">
-        <!-- <input type="file" name="image" accept="image/*"> -->
+        <input type="file" name="image" accept="image/*">
         <input type="submit"  placeholder="Them">
     </form>
     <form id="delete" method="POST" action ="/delete" enctype="multipart/form-data">
@@ -25,6 +25,7 @@
             <th>Loai</th>
             <th>Hoc ky</th>
             <th>Khoa</th>
+            <th>Hinh anh</th>
         </tr>
         <% for (var i = 0; i < data.length; i++) { %>
             <tr>
@@ -33,6 +34,7 @@
                 <td><%= data[i].course_type %></td>
                 <td><%= data[i].semester %></td>
                 <td><%= data[i].department %></td>
+                <td><img src="<%= data[i].image %>" width="50px" height="50px" alt="Hình ảnh môn học"></td>           
                 <td><input type="checkbox" name="<%=data[i].id %>" value="<%=data[i].id %>"/></td>
             </tr>
         <% } %>

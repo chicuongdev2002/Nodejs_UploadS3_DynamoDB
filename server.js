@@ -1,26 +1,55 @@
+//Khai báo thư viện
 const express = require('express');
 const multer = require('multer');
 const app = express();
-const upload = multer();
+require('dotenv').config();
 // Cấu hình aws DynamoDB
 const AWS = require('aws-sdk');
+//Cấu hình aws
+process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE="1"
+const { required } = require('nodemon/lib/config');
 const config = new AWS.Config({
-    accessKeyId: 'AKIA6GBMFE2DOCWHYX4N',
-    secretAccessKey:'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',
-    region:'ap-southeast-2'
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey:process.env.SECRET_ACCESS_KEY,
+    region:process.env.REGION
 });
 AWS.config = config;
-
+const S3=new AWS.S3();
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName ='MonHoc';
-//register middlewares
+const path=require('path')
+const buketname=process.env.S3_BUCKET_NAME
+//Cấu hình middleware
 app.use(express.json({ extended: false }));
 app.use(express.static('./templates'));
 
-//config view
+//Cấu hình hiển thị
 app.set('view engine', 'ejs');
 app.set('views', './templates');
+//Cấu hình multer quản lí upload image
+const storage=multer.memoryStorage({
+    destination(req,file,callback){
+        callback(null,"")
+    },
+});
+const upload =multer({
+    storage,
+    limits:{fileSize:2000000},
+    fileFilter(req,file,cb){
+        checkFileType(file,cb);
+    },
+});
+function checkFileType(file,cb){
+    const fileType=/jpeg|jpg|png|gif/;
+    const extname=fileType.test(path.extname(file.originalname).toLowerCase());
+    const mimetype =fileType.test(file.mimetype);
+    if(extname && mimetype){
+        return cb(null,true);
+    }
+    return cb("Error:Pls upload images /jpeg|jpg|png|gif/ only!");
 
+
+}
 //Get
 app.get('/', (req, res) => {
     const params ={
@@ -35,9 +64,24 @@ app.get('/', (req, res) => {
     });
 
 });
-//add
-app.post('/', upload.fields([]), (req, res) => {
+//Thêm
+app.post('/', upload.single('image'), (req, res) => {
     const{id,name, course_type,semester,department} = req.body;
+  const image=req.file?.originalname.split(".");
+  const fileType=image[image.length-1];
+  const filePath=`${id}_${Date.now().toString()}.${fileType}`;
+  const paramS3={
+    Bucket:buketname,
+    Key:filePath,
+    Body:req.file.buffer,
+    ContentType:req.file.mimetype,
+  };
+  S3.upload(paramS3,async(err,data)=>{
+    console.log(err);
+    if(err) {return res.send("Internal server eror");
+  }else
+  {
+const image =data.Location;
     const params = {
         TableName: tableName,
         Item: {
@@ -45,7 +89,8 @@ app.post('/', upload.fields([]), (req, res) => {
     'name':name,
     'course_type':course_type,
         'semester':semester,
-        'department':department
+        'department':department,
+        'image':image
         }
     }
     docClient.put(params, (err, data) => {
@@ -54,6 +99,8 @@ app.post('/', upload.fields([]), (req, res) => {
         }else{
             return res.redirect("/");
         }
+    })
+    }
     })
 });
 //delete
