@@ -14,10 +14,13 @@ const config = new AWS.Config({
     region:process.env.REGION
 });
 AWS.config = config;
+//S3 Lưu trữ ảnh
 const S3=new AWS.S3();
+//DynamoDB
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName ='MonHoc';
 const path=require('path')
+//Lưu trữ S3
 const buketname=process.env.S3_BUCKET_NAME
 //Cấu hình middleware
 app.use(express.json({ extended: false }));
