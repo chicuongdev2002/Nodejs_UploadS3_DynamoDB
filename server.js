@@ -9,7 +9,7 @@ const AWS = require('aws-sdk');
 process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE="1"
 const { required } = require('nodemon/lib/config');
 const config = new AWS.Config({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
+    accessKeyId: process.env.ACCESS_KEY_ID,
     secretAccessKey:process.env.SECRET_ACCESS_KEY,
     region:process.env.REGION
 });
